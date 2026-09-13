@@ -5,7 +5,7 @@ package.domain = org.medical
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
-requirements = python3,kivy==2.2.1,pillow
+requirements = python3,kivy==2.2.1
 orientation = portrait
 osx.kivy_version = 2.2.1
 fullscreen = 0
