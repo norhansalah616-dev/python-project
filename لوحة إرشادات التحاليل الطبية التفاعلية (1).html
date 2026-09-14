@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة تعليمات وشروط التحاليل الطبية | Smart Lab Instructions</title>
+  
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- html2canvas for card and poster export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card-gradient {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    @keyframes pulseSoft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.92; transform: scale(0.995); }
+    }
+    .loading-pulse {
+      animation: pulseSoft 1.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white pb-12">
+
+  <!-- Header Section -->
+  <header class="bg-gradient-to-r from-teal-900 via-teal-800 to-cyan-900 text-white shadow-xl sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3 text-center sm:text-right">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center shrink-0 shadow-inner text-teal-300">
+            <!-- Medical Flask SVG Icon -->
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 2v7.31L4.66 18.5A2 2 0 0 0 6.4 22h11.2a2 2 0 0 0 1.74-3.5L14 9.31V2"/>
+              <path d="M8.5 2h7"/>
+              <path d="M7 16h10"/>
+            </svg>
+          </div>
+          <div>
+            <h1 id="app-title" class="text-xl sm:text-2xl font-black tracking-tight">الدليل الذكي لتحضيرات التحاليل الطبية</h1>
+            <p id="app-subtitle" class="text-xs sm:text-sm text-teal-200/90 font-medium">لوحة مرجعية تفاعلية للتحضيرات الدقيقة - جاهزة للمشاركة والتحميل كصور</p>
+          </div>
+        </div>
+
+        <!-- Controls: Language Toggle & Global Download -->
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-center">
+          <button id="lang-btn" onclick="toggleLanguage()" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl text-sm font-bold border border-white/20 transition flex items-center gap-2">
+            <svg class="w-4 h-4 text-teal-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span id="lang-label">English</span>
+          </button>
+
+          <button id="btn-download-all" onclick="downloadFullPoster()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-black text-sm rounded-xl shadow-lg transition flex items-center gap-2">
+            <svg class="w-4 h-4 text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span id="btn-download-all-text">تحميل الدليل كصورة كاملة</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
+
+    <!-- Golden Fasting Rule Card -->
+    <section id="fasting-banner" class="bg-gradient-to-l from-teal-900 via-teal-800 to-cyan-950 text-white rounded-3xl p-5 sm:p-6 shadow-md border-r-8 border-teal-400">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div class="flex items-start gap-3.5">
+          <div class="p-3 bg-teal-400/20 rounded-2xl text-teal-300 shrink-0 border border-teal-400/30">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 id="fasting-rule-title" class="text-base sm:text-lg font-bold text-teal-200">القاعدة الذهبية: ما معنى "الصيام الطبي" للتحليل؟</h2>
+            <p id="fasting-rule-desc" class="text-xs sm:text-sm text-slate-200 mt-1 leading-relaxed max-w-4xl">
+              شرب الماء النقي فقط مسموح به • يمنع منعاً باتاً: أي مشروبات أخرى، اللبان، معطرات الفم والنعناع، التدخين، وممارسة الرياضة أثناء الصيام • تناول أدويتك اليومية بانتظام ما لم يوجهك الطبيب بغير ذلك.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 text-xs font-bold text-teal-100 shrink-0">
+          <span class="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-1.5">
+            <span>💧</span> <span id="badge-water">ماء فقط</span>
+          </span>
+          <span class="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-1.5">
+            <span>🚭</span> <span id="badge-smoke">ممنوع التدخين</span>
+          </span>
+          <span class="bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-1.5">
+            <span>🚫</span> <span id="badge-gum">بدون لبان أو نعناع</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar: Category filters & Live search -->
+    <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+      
+      <!-- Search Input -->
+      <div class="relative w-full">
+        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none text-slate-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
+        </div>
+        <input 
+          type="text" 
+          id="search-input"
+          oninput="handleSearch(this.value)"
+          placeholder="ابحث عن التحليل (مثال: سكر، دهون، كورتيزول، PSA، بول، صيام)..."
+          class="w-full ps-11 pe-10 py-3 text-sm rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 bg-slate-50 transition"
+        />
+        <button id="clear-search" onclick="clearSearch()" class="hidden absolute inset-y-0 end-0 pe-3 flex items-center text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Categories Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar text-xs sm:text-sm font-bold" id="category-tabs">
+        <button onclick="filterCategory('all')" class="cat-btn px-4 py-2.5 rounded-2xl transition whitespace-nowrap bg-teal-600 text-white shadow" data-cat="all" id="tab-all">الكل (31)</button>
+        <button onclick="filterCategory('sugar')" class="cat-btn px-4 py-2.5 rounded-2xl transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200" data-cat="sugar" id="tab-sugar">السكر والدهون</button>
+        <button onclick="filterCategory('hormones')" class="cat-btn px-4 py-2.5 rounded-2xl transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200" data-cat="hormones" id="tab-hormones">الهرمونات والمواعيد</button>
+        <button onclick="filterCategory('restrictions')" class="cat-btn px-4 py-2.5 rounded-2xl transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200" data-cat="restrictions" id="tab-restrictions">أدوية وحمية غذائية</button>
+        <button onclick="filterCategory('samples')" class="cat-btn px-4 py-2.5 rounded-2xl transition whitespace-nowrap bg-slate-100 text-slate-700 hover:bg-slate-200" data-cat="samples" id="tab-samples">بول وبراز وسوائل</button>
+      </div>
+
+    </div>
+
+    <!-- Grid Cards Container -->
+    <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-1 min-h-[300px]">
+      <!-- Loaded dynamically via JavaScript -->
+    </div>
+
+    <!-- Empty Search State -->
+    <div id="no-results" class="hidden text-center py-16 bg-white rounded-3xl border border-dashed border-slate-300">
+      <div class="w-16 h-16 mx-auto mb-3 text-slate-300 flex items-center justify-center bg-slate-50 rounded-2xl">
+        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </div>
+      <p id="empty-title" class="text-slate-700 font-bold text-base">لم نجد أي تحليل يطابق بحثك</p>
+      <p id="empty-desc" class="text-xs text-slate-400 mt-1">جرب كتابة الكلمة بدون همزات أو البحث بالاسم الإنجليزي</p>
+    </div>
+
+  </main>
+
+  <!-- Mobile Image Preview & Save Modal -->
+  <div id="image-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-4 bg-teal-800 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-teal-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+          </svg>
+          <span id="modal-header-title" class="text-sm font-bold">معاينة بطاقة التحليل</span>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
+          ✕
+        </button>
+      </div>
+
+      <div class="p-4 overflow-y-auto custom-scrollbar flex flex-col items-center bg-slate-100 flex-1">
+        <img id="modal-img-preview" src="" alt="Lab Card Preview" class="rounded-2xl shadow-lg border border-slate-200 max-w-full h-auto mb-3" />
+        <p id="modal-mobile-hint" class="text-xs text-slate-500 font-medium text-center">💡 للموبايل: يمكنك الضغط مطولاً على الصورة لحفظها فوراً في الاستوديو أو مشاركتها في واتساب.</p>
+      </div>
+
+      <div class="p-4 bg-white border-t border-slate-200 flex flex-wrap gap-2 justify-end">
+        <button id="modal-share-btn" onclick="shareGeneratedImage()" class="hidden px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
+          <span>📲</span> <span id="modal-share-label">مشاركة عبر واتساب</span>
+        </button>
+        <a id="modal-download-link" href="#" download="" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
+          <span>⬇️</span> <span id="modal-download-label">تنزيل الصورة</span>
+        </a>
+        <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-bold transition">
+          <span id="modal-close-label">إغلاق</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 start-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300">
+    <span id="toast-icon">✅</span>
+    <span id="toast-text">تمت العملية بنجاح</span>
+  </div>
+
+  <script>
+    let currentLang = 'ar';
+    let currentCategory = 'all';
+    let searchQuery = '';
+    let lastGeneratedBlob = null;
+    let lastGeneratedFilename = '';
+
+    // Full 31 tests directly extracted from medical file
+    const labTests = [
+      // 1. السكر والدهون
+      {
+        id: "lipid",
+        category: "sugar",
+        badgeColor: "bg-blue-50 text-blue-800 border-blue-200",
+        iconType: "clock",
+        titleAr: "مستوى الدهون بالدم (Lipid Profile)",
+        titleEn: "Lipid Profile",
+        instructionsAr: [
+          "صيام 12 ساعة (يقبل صيام من 10 إلى 14 ساعة).",
+          "يسمح بشرب الماء النقي فقط."
+        ],
+        instructionsEn: [
+          "Fast for 12 hours (acceptable range: 10–14 hours).",
+          "Plain pure water is strictly the only drink allowed."
+        ],
+        tags: ["دهون", "كوليسترول", "lipid", "cholesterol", "صيام"]
+      },
+      {
+        id: "fbs",
+        category: "sugar",
+        badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
+        iconType: "droplet",
+        titleAr: "سكر صائم (FBS)",
+        titleEn: "Fasting Blood Sugar (FBS)",
+        instructionsAr: [
+          "صيام 8 ساعات (يقبل صيام من 8 إلى 10 ساعات).",
+          "يسمح بشرب الماء النقي فقط."
+        ],
+        instructionsEn: [
+          "Fast for 8 hours (acceptable range: 8–10 hours).",
+          "Pure drinking water only."
+        ],
+        tags: ["سكر", "صائم", "fbs", "glucose"]
+      },
+      {
+        id: "ppbs",
+        category: "sugar",
+        badgeColor: "bg-amber-50 text-amber-900 border-amber-200",
+        iconType: "clock",
+        titleAr: "سكر فاطر بعد الأكل بساعتين (PPBS)",
+        titleEn: "2-Hr Postprandial Blood Sugar (PPBS)",
+        instructionsAr: [
+          "صيام 8 ساعات ويسمح بشرب الماء فقط أثناء فترة الصيام.",
+          "يتناول المريض وجبته العادية في خلال 10 دقائق من بداية الساعتين ويتناول العلاج المعتاد.",
+          "تسحب العينة بعد ساعتين بالضبط من بدء تناول الوجبة.",
+          "يرجى الحضور إلى المعمل قبل انتهاء الساعتين بربع ساعة."
+        ],
+        instructionsEn: [
+          "Fast 8 hours beforehand (water only).",
+          "Eat usual meal within 10 minutes from timer start with routine medications.",
+          "Blood sample is drawn exactly 2 hours after starting the meal.",
+          "Please arrive at the lab 15 minutes before the 2 hours elapse."
+        ],
+        tags: ["سكر فاطر", "وجبة", "ppbs", "postprandial"]
+      },
+      {
+        id: "homa_ir",
+        category: "sugar",
+        badgeColor: "bg-teal-50 text-teal-800 border-teal-200",
+        iconType: "activity",
+        titleAr: "مقاومة الإنسولين (HOMA IR)",
+        titleEn: "HOMA-IR (Insulin Resistance)",
+        instructionsAr: [
+          "يفضل صيام 8 ساعات وألا تزيد ساعات الصيام عن 10 ساعات.",
+          "يسمح بشرب الماء فقط."
+        ],
+        instructionsEn: [
+          "Fasting 8 hours is preferred (must not exceed 10 hours).",
+          "Water only is permitted."
+        ],
+        tags: ["مقاومة الانسولين", "homa ir", "insulin"]
+      },
+      {
+        id: "lipid_fbs",
+        category: "sugar",
+        badgeColor: "bg-indigo-50 text-indigo-800 border-indigo-200",
+        iconType: "layers",
+        titleAr: "مستوى الدهون بالدم مع السكر الصائم (Lipid + FBS)",
+        titleEn: "Lipid Profile + Fasting Blood Sugar",
+        instructionsAr: [
+          "صيام 10 ساعات بدقة.",
+          "يسمح بشرب الماء فقط."
+        ],
+        instructionsEn: [
+          "Strict 10-hour fast.",
+          "Drinking water only."
+        ],
+        tags: ["دهون وسكر", "lipid", "fbs", "مجمع"]
+      },
+      {
+        id: "insulin_cpep",
+        category: "sugar",
+        badgeColor: "bg-purple-50 text-purple-800 border-purple-200",
+        iconType: "syringe",
+        titleAr: "الإنسولين وسي-ببتيد (Insulin , C-peptide)",
+        titleEn: "Insulin & C-peptide",
+        instructionsAr: [
+          "عينة الصائم: يفضل صيام 8 ساعات وألا يزيد عن 10 ساعات.",
+          "عينة الفاطر: بعد ساعتين من تناول وجبة غذائية متكاملة (الانتهاء منها خلال 10-15 دقيقة)."
+        ],
+        instructionsEn: [
+          "Fasting sample: 8 hours preferred (do not exceed 10 hours).",
+          "PP sample: exactly 2 hours after a complete meal (finished within 10-15 minutes)."
+        ],
+        tags: ["انسولين", "c-peptide", "سكر"]
+      },
+      {
+        id: "ogtt",
+        category: "sugar",
+        badgeColor: "bg-cyan-50 text-cyan-800 border-cyan-200",
+        iconType: "activity",
+        titleAr: "منحنى السكر (Blood Sugar Curve / OGTT)",
+        titleEn: "Oral Glucose Tolerance Test (OGTT)",
+        instructionsAr: [
+          "صيام 8 ساعات (ويفضل صيام الليل).",
+          "سحب عينة الصائم، ثم تناول محلول 75 جم جلوكوز.",
+          "سحب 4 عينات دم كل نصف ساعة لمدة ساعتين متتاليتين مع الراحة التامة دون بذل أي مجهود."
+        ],
+        instructionsEn: [
+          "8-hour overnight fast.",
+          "Draw fasting sample, then ingest 75g glucose solution.",
+          "Draw 4 consecutive blood samples every 30 mins for 2 hours with complete rest."
+        ],
+        tags: ["منحنى السكر", "ogtt", "glucose curve"]
+      },
+      {
+        id: "ogtt_pregnancy",
+        category: "sugar",
+        badgeColor: "bg-pink-50 text-pink-800 border-pink-200",
+        iconType: "heart",
+        titleAr: "منحنى السكر للحامل (Gestational OGTT)",
+        titleEn: "Gestational OGTT (Pregnancy Curve)",
+        instructionsAr: [
+          "صيام 8 ساعات (ويفضل صيام الليل).",
+          "سحب عينة الصائم، يتبعها تناول محلول 100 جم جلوكوز.",
+          "سحب 3 عينات دم كل ساعة ولمدة 3 ساعات متتالية بدون بذل أي مجهود.",
+          "يجرى التحليل ما بين الأسبوع الـ 24 إلى الأسبوع الـ 28 من الحمل."
+        ],
+        instructionsEn: [
+          "8-hour overnight fast.",
+          "Fasting draw, followed by drinking 100g glucose solution.",
+          "Draw 3 consecutive blood samples hourly for 3 hours without exertion.",
+          "Conducted between week 24 and week 28 of pregnancy."
+        ],
+        tags: ["سكر الحمل", "حامل", "pregnancy", "ogtt"]
+      },
+      {
+        id: "osullivan",
+        category: "sugar",
+        badgeColor: "bg-teal-50 text-teal-800 border-teal-200",
+        iconType: "check",
+        titleAr: "اختبار أوسوليفان (O'sullivan Test)",
+        titleEn: "O'sullivan Test",
+        instructionsAr: [
+          "لا يحتاج إلى صيام نهائياً.",
+          "يتم تناول 50 جم جلوكوز ثم سحب عينة دم بعد ساعة واحدة بالضبط."
+        ],
+        instructionsEn: [
+          "No fasting required.",
+          "Ingest 50g glucose solution, then draw blood sample after exactly 1 hour."
+        ],
+        tags: ["اسوليفان", "أوسوليفان", "osullivan"]
+      },
+      {
+        id: "lactose",
+        category: "sugar",
+        badgeColor: "bg-orange-50 text-orange-800 border-orange-200",
+        iconType: "alert",
+        titleAr: "حساسية اللاكتوز (Lactose Intolerance Test)",
+        titleEn: "Lactose Intolerance Test",
+        instructionsAr: [
+          "صيام 8 ساعات (ويفضل صيام الليل).",
+          "إيقاف المضادات الحيوية وأدوية الحموضة وأدوية الإسهال لمدة أسبوعين قبل الفحص.",
+          "سحب عينة صائم، ثم تناول 50 جم لاكتوز أو 500 مل لبن، ثم سحب 4 عينات كل نصف ساعة لمدة ساعتين."
+        ],
+        instructionsEn: [
+          "8-hour overnight fast.",
+          "Discontinue antibiotics, antacids, and anti-diarrheal meds for 2 weeks prior.",
+          "Fasting draw, consume 50g lactose or 500ml milk, then 4 samples drawn every 30 mins for 2 hours."
+        ],
+        tags: ["لاكتوز", "حساسية لبن", "lactose"]
+      },
+
+      // 2. الهرمونات والمواعيد
+      {
+        id: "fsh",
+        category: "hormones",
+        badgeColor: "bg-rose-50 text-rose-800 border-rose-200",
+        iconType: "calendar",
+        titleAr: "هرمون FSH",
+        titleEn: "FSH (Follicle Stimulating Hormone)",
+        instructionsAr: [
+          "يجب سحب العينة في اليوم الثالث من الدورة الشهرية (أو حسب تعليمات الطبيب المعالج)."
+        ],
+        instructionsEn: [
+          "Sample must be collected on Day 3 of menstrual cycle (or per physician's directions)."
+        ],
+        tags: ["fsh", "دورة شهرية", "هرمونات"]
+      },
+      {
+        id: "progesterone",
+        category: "hormones",
+        badgeColor: "bg-rose-50 text-rose-800 border-rose-200",
+        iconType: "calendar",
+        titleAr: "هرمون البروجستيرون (Progesterone)",
+        titleEn: "Progesterone",
+        instructionsAr: [
+          "يجب سحب العينة في اليوم الـ 21 من الدورة الشهرية (أو 7 أيام قبل ميعاد الدورة التالية)، أو حسب تعليمات الطبيب المعالج."
+        ],
+        instructionsEn: [
+          "Sample must be collected on Day 21 of menstrual cycle (or 7 days prior to anticipated period)."
+        ],
+        tags: ["بروجستيرون", "تبويض", "progesterone"]
+      },
+      {
+        id: "prolactin",
+        category: "hormones",
+        badgeColor: "bg-violet-50 text-violet-800 border-violet-200",
+        iconType: "clock",
+        titleAr: "هرمون اللبن (Prolactin - PRL)",
+        titleEn: "Prolactin (PRL)",
+        instructionsAr: [
+          "يفضل سحب العينة صباحاً بعد الاستيقاظ بـ 3 إلى 4 ساعات.",
+          "تجنب أي ضغط نفسي أو توتر عصبي أو بذل مجهود بدني قبل سحب العينة."
+        ],
+        instructionsEn: [
+          "Draw sample in morning, 3–4 hours after waking up.",
+          "Strictly avoid physical exertion, mental stress, or anxiety beforehand."
+        ],
+        tags: ["هرمون اللبن", "prolactin", "رضاعة"]
+      },
+      {
+        id: "acth_cortisol",
+        category: "hormones",
+        badgeColor: "bg-amber-50 text-amber-800 border-amber-200",
+        iconType: "clock",
+        titleAr: "الكورتيزول و ACTH (Cortisol & ACTH)",
+        titleEn: "ACTH & Cortisol",
+        instructionsAr: [
+          "يتم سحب العينة من الساعة 8:00 صباحاً أو مساءً (يجب ألا يتعدى السحب الساعة 9:00 تماماً).",
+          "لا يشترط صيام للمريض."
+        ],
+        instructionsEn: [
+          "Sample collected at 8:00 AM or 8:00 PM (must not exceed 9:00 strictly).",
+          "No fasting required."
+        ],
+        tags: ["كورتيزول", "cortisol", "acth", "غدة كظرية"]
+      },
+      {
+        id: "double_marker",
+        category: "hormones",
+        badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
+        iconType: "heart",
+        titleAr: "تحليل دبل ماركر للحمل (Double Marker)",
+        titleEn: "Double Marker Test",
+        instructionsAr: [
+          "يتم سحب عينة دم من الأم في الأسبوع من 11 إلى 13 من الحمل."
+        ],
+        instructionsEn: [
+          "Maternal blood sample drawn between weeks 11 and 13 of pregnancy."
+        ],
+        tags: ["حمل", "تشوهات", "double marker", "جنين"]
+      },
+      {
+        id: "triple_marker",
+        category: "hormones",
+        badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
+        iconType: "heart",
+        titleAr: "تحليل تريبل ماركر للحمل (Triple Marker)",
+        titleEn: "Triple Marker Test",
+        instructionsAr: [
+          "يتم سحب عينة دم من الأم في الأسبوع من 14 إلى 21 من الحمل."
+        ],
+        instructionsEn: [
+          "Maternal blood sample drawn between weeks 14 and 21 of pregnancy."
+        ],
+        tags: ["حمل", "triple marker", "جنين"]
+      },
+
+      // 3. أدوية وحمية غذائية
+      {
+        id: "aldosterone",
+        category: "restrictions",
+        badgeColor: "bg-red-50 text-red-800 border-red-200",
+        iconType: "alert",
+        titleAr: "هرمون الألدوستيرون (Aldosterone)",
+        titleEn: "Aldosterone",
+        instructionsAr: [
+          "تسحب العينة صباحاً (8 - 10) بعد استلقاء المريض في راحة تامة لمدة 20-30 دقيقة.",
+          "إيقاف مدرات البول، مخفضات الضغط، الإستروجين، الكافيين، مشروب العرقسوس، والتبغ، وتقليل الأغذية الغنية بالصوديوم لمدة 2-3 أسابيع (بتنسيق مع الطبيب المعالج)."
+        ],
+        instructionsEn: [
+          "Morning draw (8:00–10:00 AM) after patient rests flat for 20–30 mins.",
+          "Stop diuretics, BP drugs, estrogen, caffeine, licorice, tobacco, and limit sodium for 2–3 weeks (consult physician)."
+        ],
+        tags: ["aldosterone", "الدوستيرون", "ضغط دم"]
+      },
+      {
+        id: "renin",
+        category: "restrictions",
+        badgeColor: "bg-red-50 text-red-800 border-red-200",
+        iconType: "alert",
+        titleAr: "نشاط الرينين بالبلازما (Plasma Renin Activity)",
+        titleEn: "Plasma Renin Activity",
+        instructionsAr: [
+          "تسحب العينة صباحاً (8 - 10) بعد استلقاء المريض لمدة 20-30 دقيقة.",
+          "إيقاف مدرات البول، مخفضات الضغط، الإستروجين، الكافيين، مشروب العرقسوس، والتبغ، وتقليل الأغذية الغنية بالصوديوم لمدة 2-3 أسابيع قبل الفحص."
+        ],
+        instructionsEn: [
+          "Morning draw (8:00–10:00 AM) after 20–30 mins supine rest.",
+          "Discontinue diuretics, antihypertensives, estrogen, caffeine, licorice, tobacco, and reduce sodium for 2–3 weeks."
+        ],
+        tags: ["renin", "رينين", "كلى"]
+      },
+      {
+        id: "catechol_plasma",
+        category: "restrictions",
+        badgeColor: "bg-red-50 text-red-800 border-red-200",
+        iconType: "alert",
+        titleAr: "الكاتيكولامينات والميتانفرين بالبلازما (Plasma Catecholamines)",
+        titleEn: "Plasma Catecholamines & Free Metanephrine",
+        instructionsAr: [
+          "تسحب العينة من 8:30 - 9:00 صباحاً بعد استلقاء المريض لمدة 20-30 دقيقة.",
+          "الامتناع عن: الفانيليا، الموز، المكسرات، الشاي، الكافيين، والشوكولاتة لمدة 3-4 أيام.",
+          "إيقاف: قطرات الأنف، أدوية الكحة، موسعات الشعب، مثبطات الشهية، أدوية الاكتئاب والضغط (إلا إذا رأى الطبيب غير ذلك) لمدة 3-4 أيام."
+        ],
+        instructionsEn: [
+          "Draw at 8:30–9:00 AM after resting supine for 20–30 mins.",
+          "Avoid vanilla, bananas, nuts, tea, caffeine, and chocolate for 3–4 days.",
+          "Stop nasal drops, cough syrups, bronchodilators, appetite suppressants, antidepressants, and BP medications for 3–4 days."
+        ],
+        tags: ["ادرينالين", "نورادرينالين", "catecholamines", "metanephrine"]
+      },
+      {
+        id: "catechol_urine",
+        category: "restrictions",
+        badgeColor: "bg-red-50 text-red-800 border-red-200",
+        iconType: "flask",
+        titleAr: "الكاتيكولامينات والميتانفرين في بول 24 ساعة (VMA)",
+        titleEn: "VMA, Metanephrine & Catecholamines (24h Urine)",
+        instructionsAr: [
+          "يتم تجميع عينة بول 24 ساعة كاملة.",
+          "الامتناع عن الفانيليا، الموز، المكسرات، الشاي، الكافيين، والشوكولاتة لمدة 3-4 أيام قبل التجميع.",
+          "إيقاف قطرات الأنف، أدوية الكحة، موسعات الشعب، مثبطات الشهية، أدوية الاكتئاب والضغط لمدة 3-4 أيام قبل التجميع."
+        ],
+        instructionsEn: [
+          "24-hour urine collection.",
+          "Avoid vanilla, bananas, nuts, tea, caffeine, and chocolate for 3–4 days prior.",
+          "Stop nasal drops, cough medicines, bronchodilators, appetite suppressants, antidepressants, and BP meds for 3–4 days prior."
+        ],
+        tags: ["vma", "بول 24 ساعة", "metanephrine"]
+      },
+      {
+        id: "5hiaa",
+        category: "restrictions",
+        badgeColor: "bg-orange-50 text-orange-800 border-orange-200",
+        iconType: "flask",
+        titleAr: "تحليل 5-HIAA في بول 24 ساعة",
+        titleEn: "5-HIAA (24-Hour Urine)",
+        instructionsAr: [
+          "يتم تجميع عينة بول 24 ساعة كاملة.",
+          "الامتناع عن: الأناناس، البرقوق، الكيوي، المكسرات، الأفوكادو، الموز، الطماطم، والباذنجان لمدة 48 ساعة قبل التجميع.",
+          "إيقاف أدوية: الأسبرين، أدوية الكحة، ومضادات الهيستامين لمدة 48 ساعة قبل التجميع."
+        ],
+        instructionsEn: [
+          "24-hour urine collection required.",
+          "Strictly avoid pineapples, plums, kiwi, nuts, avocados, bananas, tomatoes, and eggplant for 48 hours prior.",
+          "Stop aspirin, cough medicines, and antihistamines for 48 hours prior."
+        ],
+        tags: ["5hiaa", "سيروتونين", "بول 24 ساعة"]
+      },
+      {
+        id: "hydroxyproline",
+        category: "restrictions",
+        badgeColor: "bg-amber-50 text-amber-800 border-amber-200",
+        iconType: "flask",
+        titleAr: "هيدروكسي برولين في البول (Urine Hydroxyproline)",
+        titleEn: "Urine Hydroxyproline (24h)",
+        instructionsAr: [
+          "يتم تجميع عينة بول 24 ساعة كاملة.",
+          "الامتناع التام عن تناول المأكولات التي تحتوي على الكالسيوم والجيلاتين لمدة 24 ساعة قبل التجميع."
+        ],
+        instructionsEn: [
+          "24-hour urine collection.",
+          "Strictly avoid calcium-rich food and gelatin for 24 hours prior to collection."
+        ],
+        tags: ["hydroxyproline", "كالسيوم", "جيلاتين"]
+      },
+      {
+        id: "coagulation",
+        category: "restrictions",
+        badgeColor: "bg-rose-50 text-rose-800 border-rose-200",
+        iconType: "alert",
+        titleAr: "فحوصات التجلط (Protein C, S, Lupus Anticoagulant)",
+        titleEn: "Protein C, Protein S & Lupus Anticoagulant",
+        instructionsAr: [
+          "يجب إيقاف عقار الماريفان (Warfarin) لمدة أسبوع كامل.",
+          "إيقاف عقار الهيبارين ومشتقاته لمدة يومين (وذلك بعد استشارة وتنسيق تام مع الطبيب المعالج)."
+        ],
+        instructionsEn: [
+          "Discontinue Warfarin (Marevan) for 1 week.",
+          "Discontinue Heparin and derivatives for 2 days (strictly under treating doctor's supervision)."
+        ],
+        tags: ["تجلط", "سيولة", "وارفارين", "lupus", "protein c"]
+      },
+      {
+        id: "g6pd",
+        category: "restrictions",
+        badgeColor: "bg-slate-50 text-slate-800 border-slate-200",
+        iconType: "activity",
+        titleAr: "أنيميا الفول الكمي (G6PD Quantitative)",
+        titleEn: "G6PD Quantitative Test",
+        instructionsAr: [
+          "يجب ألا يتم عمل الاختبار إطلاقاً أثناء ظهور أعراض تكسير الدم الحادة أو بعد الانتهاء منها مباشرة.",
+          "تسحب العينة بعد شهر كامل من حدوث نوبة الأنيميا (إلا إذا أصر الطبيب المعالج كتابياً)."
+        ],
+        instructionsEn: [
+          "Must NOT be performed during acute hemolytic episode or right after it.",
+          "Draw sample 1 full month after hemolytic crisis unless physician insists."
+        ],
+        tags: ["انيميا الفول", "g6pd", "تكسير دم"]
+      },
+      {
+        id: "urea_breath",
+        category: "restrictions",
+        badgeColor: "bg-red-50 text-red-800 border-red-200",
+        iconType: "alert",
+        titleAr: "جرثومة المعدة بالنفخ (Urea Breath Test)",
+        titleEn: "Urea Breath Test (H. Pylori)",
+        instructionsAr: [
+          "صيام 6 ساعات على الأقل قبل التحليل.",
+          "إيقاف المضادات الحيوية لمدة 4 أسابيع قبل الفحص.",
+          "إيقاف أدوية المعدة ومضادات الحموضة لمدة أسبوع على الأقل.",
+          "لا يستخدم للحامل أو أثناء الرضاعة أو للأطفال، ولا يتم الفحص في حالة وجود نزيف هضمي منذ أسبوع."
+        ],
+        instructionsEn: [
+          "Fast at least 6 hours prior to test.",
+          "Stop antibiotics for 4 weeks before testing.",
+          "Stop stomach and antacid medications for at least 1 week.",
+          "Contraindicated in pregnancy, lactation, children, and recent GI bleeding within 1 week."
+        ],
+        tags: ["جرثومة المعدة", "نفخ", "urea breath", "معدة"]
+      },
+
+      // 4. عينات البول والبراز والمسالك والذكورة
+      {
+        id: "urine_complete",
+        category: "samples",
+        badgeColor: "bg-cyan-50 text-cyan-800 border-cyan-200",
+        iconType: "flask",
+        titleAr: "تحليل بول كامل (Complete Urine Analysis)",
+        titleEn: "Complete Urine Analysis",
+        instructionsAr: [
+          "تعتبر العينة الصباحية الأولى (أول عينة بعد الاستيقاظ) هي الأفضل، ويمكن أخذ عينة عشوائية بأي وقت.",
+          "توضع العينة في وعاء نظيف مخصص يتم استلامه من المعمل.",
+          "لا يتم استقبال العينات التي مر على إخراجها أكثر من ساعتين."
+        ],
+        instructionsEn: [
+          "First morning void is ideal, though random samples are acceptable.",
+          "Place in dedicated clean container provided by laboratory.",
+          "Samples over 2 hours old cannot be accepted."
+        ],
+        tags: ["بول", "urine", "مسالك"]
+      },
+      {
+        id: "stool_routine",
+        category: "samples",
+        badgeColor: "bg-stone-50 text-stone-800 border-stone-200",
+        iconType: "check",
+        titleAr: "تحليل براز (Stool Analysis)",
+        titleEn: "Stool Analysis",
+        instructionsAr: [
+          "توضع العينة داخل وعاء مخصص ونظيف يتم استلامه من المعمل.",
+          "لا يتم استقبال العينات التي مر عليها أكثر من ساعتين دون أن تحفظ مبردة في الثلاجة."
+        ],
+        instructionsEn: [
+          "Collect inside dedicated clean container supplied by the lab.",
+          "Samples older than 2 hours cannot be processed unless refrigerated."
+        ],
+        tags: ["براز", "stool", "طفيليات"]
+      },
+      {
+        id: "occult_blood",
+        category: "samples",
+        badgeColor: "bg-rose-50 text-rose-800 border-rose-200",
+        iconType: "alert",
+        titleAr: "الدم المختبئ بالبراز (Occult Blood)",
+        titleEn: "Fecal Occult Blood Test (FOB)",
+        instructionsAr: [
+          "عدم تجميع العينة أثناء الدورة الشهرية أو قبلها/بعدها بـ 3 أيام، أو في وجود نزيف بالبول أو بواسير.",
+          "توقف الأسبرين، أدوية السيولة، الحموضة، الملينات والمشروبات الكحولية لمدة 48 ساعة.",
+          "عدم غسل الأسنان بالفرشاة نهائياً لمدة 24 ساعة قبل التحليل.",
+          "تسليم العينة في وعاء المعمل خلال ساعتين (أو حفظها بالثلاجة)."
+        ],
+        instructionsEn: [
+          "Do not collect during menstruation (or 3 days before/after), or with urinary/hemorrhoidal bleeding.",
+          "Stop aspirin, anticoagulants, antacids, laxatives, and alcohol for 48 hours.",
+          "Do NOT brush teeth for 24 hours prior to test.",
+          "Deliver to lab within 2 hours or refrigerate."
+        ],
+        tags: ["دم خفي", "بواسير", "occult blood", "fob"]
+      },
+      {
+        id: "urine_24h",
+        category: "samples",
+        badgeColor: "bg-sky-50 text-sky-800 border-sky-200",
+        iconType: "flask",
+        titleAr: "تجميع بول 24 ساعة (24-Hour Urine Collection)",
+        titleEn: "24-Hour Urine Collection",
+        instructionsAr: [
+          "يتم استلام وعاء نظيف وجاف مخصص من المعمل.",
+          "يبدأ المريض بإفراغ المثانة صباحاً في الحمام ويتم تسجيل الوقت (هذه العينة تهمل ولا تجمع).",
+          "يتم تجميع كل نقطة بول بعد ذلك حتى نفس التوقيت باليوم التالي في نفس الوعاء ويحفظ بالثلاجة طوال الوقت.",
+          "يجب أن تصل العينة كاملة للمعمل خلال ساعتين كحد أقصى من انتهاء التجميع."
+        ],
+        instructionsEn: [
+          "Obtain large sterile collection container from lab.",
+          "Empty bladder completely in morning and note time (discard this void).",
+          "Collect all urine thereafter for 24 hours until same time next day. Keep refrigerated.",
+          "Deliver to lab within 2 hours after final collection."
+        ],
+        tags: ["بول 24", "24 hours", "تجميع بول"]
+      },
+      {
+        id: "semen_casa",
+        category: "samples",
+        badgeColor: "bg-blue-50 text-blue-800 border-blue-200",
+        iconType: "clock",
+        titleAr: "تحليل السائل المنوي (CASA & Semen Analysis)",
+        titleEn: "Semen Analysis (CASA)",
+        instructionsAr: [
+          "الامتناع التام عن الجماع أو القذف لمدة 2 إلى 5 أيام قبل التحليل.",
+          "تجميع العينة في وعاء معقم ذو فتحة واسعة من المعمل مع الاهتمام بوضع النقط الأولى، وتجنب ملامسة الماء أو الصابون.",
+          "إحضار العينة للمعمل في خلال 20 إلى 30 دقيقة فقط مع تدفئتها بالقرب من الجسم أثناء النقل."
+        ],
+        instructionsEn: [
+          "Strict sexual abstinence for 2 to 5 days prior to test.",
+          "Collect in sterile wide-mouth lab cup; ensure first drops are included; avoid water/soap contact.",
+          "Deliver to lab strictly within 20–30 minutes (keep warm near body temperature during transport)."
+        ],
+        tags: ["سائل منوي", "مني", "casa", "semen"]
+      },
+      {
+        id: "psa",
+        category: "samples",
+        badgeColor: "bg-indigo-50 text-indigo-800 border-indigo-200",
+        iconType: "check",
+        titleAr: "دلالات أورام البروستاتا (PSA)",
+        titleEn: "Prostate-Specific Antigen (PSA)",
+        instructionsAr: [
+          "يشترط الامتناع عن الجماع أو المجهود البدني العنيف وركوب الدراجات لمدة 48 ساعة.",
+          "يجب سحب العينة بعد 10 أيام على الأقل من آخر فحص بالمنظار، تركيب قسطرة، أو فحص شرجي/بروستاتا."
+        ],
+        instructionsEn: [
+          "Abstain from intercourse, vigorous cycling, or strenuous exercise for 48 hours.",
+          "Sample must be collected at least 10 days after endoscopy, catheterization, or rectal/prostate exam."
+        ],
+        tags: ["بروستاتا", "psa", "اورام"]
+      }
+    ];
+
+    // Inline SVG Icon Provider
+    function getSvgIcon(type) {
+      switch(type) {
+        case 'clock':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+        case 'droplet':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`;
+        case 'activity':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
+        case 'calendar':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+        case 'syringe':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-.4.4-1 .6-1.6.6H3v-4.1c0-.6.2-1.2.6-1.6L14 3.9"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg>`;
+        case 'heart':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+        case 'alert':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+        case 'flask':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.66 18.5A2 2 0 0 0 6.4 22h11.2a2 2 0 0 0 1.74-3.5L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>`;
+        case 'layers':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`;
+        default:
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+      }
+    }
+
+    // Render Cards
+    function renderCards() {
+      const container = document.getElementById('cards-container');
+      const noResults = document.getElementById('no-results');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      const filtered = labTests.filter(test => {
+        const matchesCategory = currentCategory === 'all' || test.category === currentCategory;
+        const q = searchQuery.toLowerCase().trim();
+        const matchesSearch = !q || 
+          test.titleAr.toLowerCase().includes(q) ||
+          test.titleEn.toLowerCase().includes(q) ||
+          test.tags.some(tag => tag.toLowerCase().includes(q)) ||
+          test.instructionsAr.some(ins => ins.toLowerCase().includes(q)) ||
+          test.instructionsEn.some(ins => ins.toLowerCase().includes(q));
+
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        if (noResults) noResults.classList.remove('hidden');
+      } else {
+        if (noResults) noResults.classList.add('hidden');
+      }
+
+      filtered.forEach((test, idx) => {
+        const isAr = currentLang === 'ar';
+        const title = isAr ? test.titleAr : test.titleEn;
+        const subTitle = isAr ? test.titleEn : test.titleAr;
+        const instructions = isAr ? test.instructionsAr : test.instructionsEn;
+        const downloadText = isAr ? "تحميل كصورة" : "Export Card";
+
+        const card = document.createElement('div');
+        card.id = `card-${test.id}`;
+        card.className = "card-gradient border border-slate-200/90 rounded-3xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between relative overflow-hidden group";
+
+        let instructionsHtml = instructions.map(inst => `
+          <li class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <span class="inline-block w-2 h-2 rounded-full bg-teal-600 mt-1.5 shrink-0"></span>
+            <span>${inst}</span>
+          </li>
+        `).join('');
+
+        card.innerHTML = `
+          <!-- Accent Top Bar -->
+          <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-teal-500 via-cyan-500 to-teal-600"></div>
+
+          <div>
+            <!-- Card Header -->
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <span class="inline-block px-2.5 py-0.5 text-[11px] font-black rounded-full border ${test.badgeColor} mb-1.5">
+                  #${idx + 1}
+                </span>
+                <h3 class="font-black text-slate-900 text-base sm:text-lg leading-snug">${title}</h3>
+                <p class="text-[11px] text-slate-400 font-bold tracking-wide mt-0.5">${subTitle}</p>
+              </div>
+              <div class="p-2.5 rounded-2xl bg-teal-50 text-teal-700 border border-teal-100 shrink-0 shadow-sm">
+                ${getSvgIcon(test.iconType)}
+              </div>
+            </div>
+
+            <!-- Instructions Box -->
+            <div class="my-4 bg-white/90 rounded-2xl p-4 border border-slate-100 shadow-inner">
+              <p class="text-[11px] font-black text-teal-900 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>${isAr ? "التحضير والشروط المطلوبة:" : "Requirements & Preparation:"}</span>
+              </p>
+              <ul class="space-y-2.5">
+                ${instructionsHtml}
+              </ul>
+            </div>
+          </div>
+
+          <!-- Bottom Action Bar -->
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400 font-bold tracking-tight">معمل التحاليل الطبية</span>
+            <button 
+              onclick="downloadSingleCard('card-${test.id}', '${test.id}')"
+              class="px-3.5 py-2 bg-teal-50 hover:bg-teal-700 text-teal-800 hover:text-white rounded-xl text-xs font-bold border border-teal-200 hover:border-teal-700 active:scale-95 transition flex items-center gap-1.5 shadow-sm"
+              title="تصدير كصورة مستقلة جاهزة للمشاركة"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span>${downloadText}</span>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Filter by Category
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        if (btn.getAttribute('data-cat') === cat) {
+          btn.classList.add('bg-teal-600', 'text-white', 'shadow');
+          btn.classList.remove('bg-slate-100', 'text-slate-700');
+        } else {
+          btn.classList.remove('bg-teal-600', 'text-white', 'shadow');
+          btn.classList.add('bg-slate-100', 'text-slate-700');
+        }
+      });
+      renderCards();
+    }
+
+    // Search Handler
+    function handleSearch(val) {
+      searchQuery = val;
+      const clearBtn = document.getElementById('clear-search');
+      if (clearBtn) {
+        if (val.trim()) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+      renderCards();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('search-input');
+      if (input) input.value = '';
+      searchQuery = '';
+      document.getElementById('clear-search').classList.add('hidden');
+      renderCards();
+    }
+
+    // Language Toggle
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      const isAr = currentLang === 'ar';
+
+      document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+      document.documentElement.lang = isAr ? 'ar' : 'en';
+
+      document.getElementById('lang-label').innerText = isAr ? 'English' : 'عربي';
+      document.getElementById('app-title').innerText = isAr ? 'الدليل الذكي لتحضيرات التحاليل الطبية' : 'Smart Clinical Laboratory Preparation Guide';
+      document.getElementById('app-subtitle').innerText = isAr ? 'لوحة مرجعية تفاعلية للتحضيرات الدقيقة - جاهزة للمشاركة والتحميل كصور' : 'Evidence-based patient preparation guide - Exportable cards';
+      document.getElementById('btn-download-all-text').innerText = isAr ? 'تحميل الدليل كصورة كاملة' : 'Download Poster Image';
+      
+      document.getElementById('fasting-rule-title').innerText = isAr ? 'القاعدة الذهبية: ما معنى "الصيام الطبي" للتحليل؟' : 'Golden Rule: Clinical Fasting Explained';
+      document.getElementById('fasting-rule-desc').innerText = isAr ? 
+        'شرب الماء النقي فقط مسموح به • يمنع منعاً باتاً: أي مشروبات أخرى، اللبان، معطرات الفم والنعناع، التدخين، والرياضة أثناء الصيام • تناول أدويتك اليومية بانتظام ما لم يوجهك الطبيب بغير ذلك.' :
+        'Plain drinking water ONLY is permitted • Strictly avoid any other drinks, chewing gum, mints, smoking, and exercise during fast • Continue routine prescribed medications unless directed by your physician.';
+
+      document.getElementById('badge-water').innerText = isAr ? 'ماء فقط' : 'Water Only';
+      document.getElementById('badge-smoke').innerText = isAr ? 'ممنوع التدخين' : 'No Smoking';
+      document.getElementById('badge-gum').innerText = isAr ? 'بدون لبان أو نعناع' : 'No Gum / Mints';
+
+      document.getElementById('search-input').placeholder = isAr ? 'ابحث عن التحليل (مثال: سكر، دهون، كورتيزول، PSA، بول، صيام)...' : 'Search test name (e.g., glucose, lipid, cortisol, urine, psa)...';
+
+      document.getElementById('tab-all').innerText = isAr ? 'الكل (31)' : 'All (31)';
+      document.getElementById('tab-sugar').innerText = isAr ? 'السكر والدهون' : 'Glucose & Lipids';
+      document.getElementById('tab-hormones').innerText = isAr ? 'الهرمونات والمواعيد' : 'Hormones & Timings';
+      document.getElementById('tab-restrictions').innerText = isAr ? 'أدوية وحمية غذائية' : 'Diet & Medications';
+      document.getElementById('tab-samples').innerText = isAr ? 'بول وبراز وسوائل' : 'Urine, Stool & Semen';
+
+      document.getElementById('empty-title').innerText = isAr ? 'لم نجد أي تحليل يطابق بحثك' : 'No matching lab test found';
+      document.getElementById('empty-desc').innerText = isAr ? 'جرب كتابة الكلمة بدون همزات أو البحث بالاسم الإنجليزي' : 'Try searching with alternate terms or in English';
+
+      document.getElementById('modal-header-title').innerText = isAr ? 'معاينة بطاقة التحليل' : 'Lab Card Preview';
+      document.getElementById('modal-download-label').innerText = isAr ? 'تنزيل الصورة' : 'Download Image';
+      document.getElementById('modal-share-label').innerText = isAr ? 'مشاركة عبر واتساب' : 'Share via WhatsApp';
+      document.getElementById('modal-close-label').innerText = isAr ? 'إغلاق' : 'Close';
+      document.getElementById('modal-mobile-hint').innerText = isAr ? '💡 للموبايل: يمكنك الضغط مطولاً على الصورة لحفظها فوراً في الاستوديو أو مشاركتها في واتساب.' : '💡 Mobile tip: Long-press the preview image to save to gallery or share directly.';
+
+      renderCards();
+    }
+
+    // Toast Notification
+    function showToast(msg, icon = '✅') {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-text');
+      const iconEl = document.getElementById('toast-icon');
+      if (!toast || !text) return;
+
+      text.innerText = msg;
+      iconEl.innerText = icon;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3200);
+    }
+
+    // Open Mobile Image Modal
+    function openModalWithImage(dataUrl, filename, blob) {
+      lastGeneratedBlob = blob;
+      lastGeneratedFilename = filename;
+
+      const modal = document.getElementById('image-modal');
+      const img = document.getElementById('modal-img-preview');
+      const downloadLink = document.getElementById('modal-download-link');
+      const shareBtn = document.getElementById('modal-share-btn');
+
+      img.src = dataUrl;
+      downloadLink.href = dataUrl;
+      downloadLink.download = filename;
+
+      if (navigator.canShare && blob) {
+        shareBtn.classList.remove('hidden');
+      } else {
+        shareBtn.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('image-modal').classList.add('hidden');
+    }
+
+    // Share Generated Image via Web Share API
+    async function shareGeneratedImage() {
+      if (!lastGeneratedBlob) return;
+      try {
+        const file = new File([lastGeneratedBlob], lastGeneratedFilename, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'شروط التحليل الطبي',
+            text: 'تعليمات وشروط التحليل الطبي المعتمدة للمريض'
+          });
+          showToast(currentLang === 'ar' ? 'تمت المشاركة بنجاح' : 'Shared successfully!');
+        } else {
+          showToast(currentLang === 'ar' ? 'المشاركة غير مدعومة مباشرة، استخدم زر التحميل' : 'Sharing unsupported, use download button', 'ℹ️');
+        }
+      } catch (err) {
+        console.log('Share dismissed or failed:', err);
+      }
+    }
+
+    // Download Single Card with high resolution
+    function downloadSingleCard(cardElementId, testId) {
+      const card = document.getElementById(cardElementId);
+      if (!card) return;
+
+      showToast(currentLang === 'ar' ? 'جارٍ تجهيز الصورة بدقة عالية...' : 'Generating high-res image...', '⏳');
+
+      html2canvas(card, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        canvas.toBlob(blob => {
+          const dataUrl = canvas.toDataURL('image/png');
+          const filename = `lab_${testId}_${currentLang}.png`;
+          
+          // Trigger direct download
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = dataUrl;
+          link.click();
+
+          // Also open modal on mobile for easy long-press & sharing
+          openModalWithImage(dataUrl, filename, blob);
+          showToast(currentLang === 'ar' ? 'تم تجهيز الصورة بنجاح!' : 'Card generated successfully!');
+        }, 'image/png');
+      }).catch(err => {
+        console.error("Error generating image:", err);
+        showToast(currentLang === 'ar' ? 'عذراً، حدث خطأ أثناء التوليد' : 'Failed to generate image', '❌');
+      });
+    }
+
+    // Download Full Poster
+    function downloadFullPoster() {
+      const target = document.getElementById('cards-container');
+      const btnText = document.getElementById('btn-download-all-text');
+      if (!target || !btnText) return;
+
+      const originalText = btnText.innerText;
+      btnText.innerText = currentLang === 'ar' ? 'جارٍ التجهيز...' : 'Rendering...';
+      showToast(currentLang === 'ar' ? 'جارٍ توليد بوستر الدليل كاملاً...' : 'Rendering full poster image...', '⏳');
+
+      html2canvas(target, {
+        scale: 2,
+        backgroundColor: '#f1f5f9',
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        btnText.innerText = originalText;
+        canvas.toBlob(blob => {
+          const dataUrl = canvas.toDataURL('image/png');
+          const filename = `lab_tests_complete_guide_${currentLang}.png`;
+          
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = dataUrl;
+          link.click();
+
+          openModalWithImage(dataUrl, filename, blob);
+          showToast(currentLang === 'ar' ? 'تم تنزيل الدليل كاملاً بنجاح!' : 'Full poster saved!');
+        }, 'image/png');
+      }).catch(err => {
+        btnText.innerText = originalText;
+        console.error("Error generating full poster:", err);
+        showToast(currentLang === 'ar' ? 'حدث خطأ أثناء تحميل الصورة' : 'Error generating poster', '❌');
+      });
+    }
+
+    // Immediate Reliable Initialization
+    function initApp() {
+      renderCards();
+    }
+
+    // Ensure it renders immediately even if DOMContentLoaded already fired
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+
+    // Additional fallback for mobile webviews
+    setTimeout(initApp, 100);
+  </script>
+</body>
+</html>
