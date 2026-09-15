@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -33,6 +34,13 @@
       font-family: 'Cairo', sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
+    /* إلغاء تباعد الحروف نهائياً لضمان اتصال الحروف العربية في الصور */
+    * {
+      letter-spacing: normal !important;
+    }
+    [dir="rtl"] {
+      text-align: right;
+    }
     .card-gradient {
       background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
     }
@@ -53,7 +61,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white pb-12">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white">
 
   <!-- Header Section -->
   <header class="bg-gradient-to-r from-teal-900 via-teal-800 to-cyan-900 text-white shadow-xl sticky top-0 z-30">
@@ -182,6 +190,31 @@
     </div>
 
   </main>
+
+  <!-- Footer Section matching dashboard aesthetic -->
+  <footer id="footer" class="mt-auto bg-gradient-to-r from-teal-950 via-slate-900 to-cyan-950 text-slate-300 border-t border-teal-800/40 shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
+        
+        <!-- Copyright -->
+        <div class="copyright text-center sm:text-right text-slate-300 flex items-center gap-1.5 font-medium">
+          <span>©</span>
+          <span class="text-slate-400">Copyright</span>
+          <strong class="px-1.5 py-0.5 rounded-lg bg-teal-500/10 text-teal-300 border border-teal-500/20 font-bold">Nourhan Portfolio</strong>
+          <span class="text-slate-400">All Rights Reserved</span>
+        </div>
+
+        <!-- Credits -->
+        <div class="credits flex items-center gap-2 text-slate-400 font-medium">
+          <span>Designed with <span class="text-rose-400">♥</span> by</span>
+          <span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-md bg-white/10 text-teal-200 font-bold tracking-wider border border-white/10 shadow-sm">
+            NS
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </footer>
 
   <!-- Mobile Image Preview & Save Modal -->
   <div id="image-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
@@ -877,7 +910,7 @@
                   #${idx + 1}
                 </span>
                 <h3 class="font-black text-slate-900 text-base sm:text-lg leading-snug">${title}</h3>
-                <p class="text-[11px] text-slate-400 font-bold tracking-wide mt-0.5">${subTitle}</p>
+                <p class="text-[11px] text-slate-400 font-bold mt-0.5">${subTitle}</p>
               </div>
               <div class="p-2.5 rounded-2xl bg-teal-50 text-teal-700 border border-teal-100 shrink-0 shadow-sm">
                 ${getSvgIcon(test.iconType)}
@@ -886,8 +919,8 @@
 
             <!-- Instructions Box -->
             <div class="my-4 bg-white/90 rounded-2xl p-4 border border-slate-100 shadow-inner">
-              <p class="text-[11px] font-black text-teal-900 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <p class="text-[12px] font-black text-teal-900 mb-2.5 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-teal-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                 </svg>
                 <span>${isAr ? "التحضير والشروط المطلوبة:" : "Requirements & Preparation:"}</span>
@@ -900,8 +933,9 @@
 
           <!-- Bottom Action Bar -->
           <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-            <span class="text-[10px] text-slate-400 font-bold tracking-tight">معمل التحاليل الطبية</span>
+            <span class="text-[11px] text-slate-500 font-bold">🏥 دليل تعليمات وشروط التحاليل</span>
             <button 
+              data-html2canvas-ignore="true"
               onclick="downloadSingleCard('card-${test.id}', '${test.id}')"
               class="px-3.5 py-2 bg-teal-50 hover:bg-teal-700 text-teal-800 hover:text-white rounded-xl text-xs font-bold border border-teal-200 hover:border-teal-700 active:scale-95 transition flex items-center gap-1.5 shadow-sm"
               title="تصدير كصورة مستقلة جاهزة للمشاركة"
@@ -1063,17 +1097,78 @@
     }
 
     // Download Single Card with high resolution
-    function downloadSingleCard(cardElementId, testId) {
+    async function downloadSingleCard(cardElementId, testId) {
       const card = document.getElementById(cardElementId);
       if (!card) return;
 
       showToast(currentLang === 'ar' ? 'جارٍ تجهيز الصورة بدقة عالية...' : 'Generating high-res image...', '⏳');
 
+      // التأكد من اكتمال تحميل الخط العربي قبل الرسم
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
       html2canvas(card, {
         scale: 3,
         backgroundColor: '#ffffff',
         useCORS: true,
-        logging: false
+        logging: false,
+        onclone: (clonedDoc) => {
+          // ضمان تطبيق اتجاه النص والخط بدون أي تباعد أحرف في النسخة المصورة
+          const clonedCard = clonedDoc.getElementById(cardElementId);
+          if (clonedCard) {
+            clonedCard.style.fontFamily = "'Cairo', sans-serif";
+            clonedCard.style.letterSpacing = "0px";
+            clonedCard.querySelectorAll('*').forEach(el => {
+              el.style.letterSpacing = "0px";
+            });
+          }
+        }
+      }).then(canvas => {
+        canvas.toBlob(blob => {
+          const dataUrl = canvas.toDataURL('image/png');
+          const filename = `lab_${testId}_${currentLang}.png`;
+          
+          // Trigger direct download
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = dataUrl;
+          link.click();
+
+          // Also open modal on mobile for easy long-press & sharing
+          openModalWithImage(dataUrl, filename, blob);
+          showToast(currentLang === 'ar' ? 'تم تجهيز الصورة بنجاح!' : 'Card generated successfully!');
+        }, 'image/png');
+      }).catch(err => {
+        console.error("Error generating image:", err);
+        showToast(currentLang === 'ar' ? 'عذراً، حدث خطأ أثناء التوليد' : 'Failed to generate image', '❌');
+      });
+    }
+
+    // Download Full Poster
+    async function downloadFullPoster() {
+      const target = document.getElementById('cards-container');
+      const btnText = document.getElementById('btn-download-all-text');
+      if (!target || !btnText) return;
+
+      const originalText = btnText.innerText;
+      btnText.innerText = currentLang === 'ar' ? 'جارٍ التجهيز...' : 'Rendering...';
+      showToast(currentLang === 'ar' ? 'جارٍ توليد بوستر الدليل كاملاً...' : 'Rendering full poster image...', '⏳');
+
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
+      html2canvas(target, {
+        scale: 2,
+        backgroundColor: '#f1f5f9',
+        useCORS: true,
+        logging: false,
+        onclone: (clonedDoc) => {
+          clonedDoc.querySelectorAll('*').forEach(el => {
+            el.style.letterSpacing = "0px";
+          });
+        }
       }).then(canvas => {
         canvas.toBlob(blob => {
           const dataUrl = canvas.toDataURL('image/png');
@@ -1147,4 +1242,4 @@
     setTimeout(initApp, 100);
   </script>
 </body>
-    </html>
+</html>
